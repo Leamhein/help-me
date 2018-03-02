@@ -3,33 +3,43 @@ module.exports = function count(s, pairs) {
   b = 1,
   counter = 0,
   ans = 0;
-  function evclid (b) {
-    var a = N;
-    while (a && b) {
-      if (a >= b) {
-        a %= b;
-      } else {
-        b %= a;
-      }
+
+  function Euler (N) {
+      var ans = N,
+      simple = [],
+      j = 1,
+      i = 2; // divider
+      if (N == i) {
+        simple[0] = 2;
+        return simple[0];
+      };
+      do {
+       if (N % i == 0) { // base
+        simple[j-1] = i;
+        j++;
+        N = N / i;
+       } else {
+        i++;
+        };
+      } while (i <= N);
+    //  return simple; //return max simple multiplier
+      for (let i = 0, length = simple.length; i < length; i++) {
+        if (simple[i+1] != simple[i]) {
+          ans *= 1 - 1/simple[i];
+        };
+      };
+      return Math.round(ans);
     };
-    if (a | b == 1) {
-      return true;
-    };
-    return false;
-  };
-  for (let i = 0, length = pairs.length; i < length; i++) {
+
+    for (let i = 0, length = pairs.length; i < length; i++) {
     N *= pairs[i][0] * pairs[i][1];
-    console.log("N= "+ N);
   };
-  for (let i = 1; i < N; i++) {
-    counter += evclid (b + i);
-  };
-  console.log("counter= "+ counter);
+
   for (let i = 0, length = s.length; i < length; i++) {
     if (s[i] == "1") {
-      ans += counter;
+      ans += Euler(N);
     } else {
-      ans += (N - counter);
+      ans += (N - Euler(N));
     }
   }
   ans %= 1000000007;
