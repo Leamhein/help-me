@@ -44,10 +44,9 @@ module.exports = function count(s, pairs) {
     for (let key of simple) {
       simpleArr.push(key);
     };
-    console.log("simpleArr= "+simpleArr);
 
     function mult (pos) { //multiply elements in simple array
-      for (let i = pos, length = simpleArr.length; i < length; i++) {
+      for (let i = pos+1, length = simpleArr.length; i < length; i++) {
         multiply.push(simpleArr[pos] * simpleArr[i]);
       };
     };
@@ -72,9 +71,6 @@ module.exports = function count(s, pairs) {
     for (let i = 0, length = addition.length; i < length; i++) {
       incExc += addition[i];
     };
-    console.log("multiply= "+multiply); //excess values in multiply
-    console.log("substract= "+substract);
-    console.log("addition= "+addition);
   };
 
 
@@ -98,5 +94,5 @@ module.exports = function count(s, pairs) {
     };
   };
   ans %= 1000000007;
-  return ans;
+  return Math.floor(ans);
 };
