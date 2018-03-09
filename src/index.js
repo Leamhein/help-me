@@ -1,10 +1,7 @@
 module.exports = function count(s, pairs) {
-  var N = 1,
-  b = 1,
-  counter = 0,
-  ans = 0, //answer
-  euler, incExc,
-  simple = new Set; //set of simple multiply
+  let N = 1,
+  simple = new Set,
+  ans = 0;
 
   function Factorise (base) { //factorise function
     var j = 1,
@@ -21,21 +18,20 @@ module.exports = function count(s, pairs) {
       i++;
       };
     } while (i <= base);
-    return simple; //return max simple multiplier
+    return simple;
+  };
+
+  function Euler (N) { //Euler function
+    var euler = N;
+    for (let key of simple) {
+      euler *= (1 - 1 / key);
     };
-
-  function Euler () { //Euler function
-    euler = N;
-      for (let key of simple) {
-        euler *= (1 - 1 / key);
-        };
-      return Math.round(euler);
-    };
+    return Math.floor(euler);
+  };
 
 
-  function incExc () { //inclusion–exclusion function
-    var substract = [], //array of numbers to substract from N
-    addition = [], //array of numbers to add to N
+  function incExc (N) { //inclusion–exclusion function
+    var addition = [], //array of numbers to add to N
     multiply = [1], //multiplied simple
     simpleArr = [];
 
@@ -52,45 +48,37 @@ module.exports = function count(s, pairs) {
     };
 
 
-    for (let key of simple) { //fill the array with values to substract
-      substract.push(N/key);
+    for (let key of simple) {
+      incExc -= (N/key);
       multiply[0] *= key;
     };
-    substract.push(N/multiply[0]);
+    incExc -= (N/multiply[0]);
 
     for (let i = 0, length = simpleArr.length; i < length-1; i++) {
       mult(i);
     };
 
     for (let i = 1, length = multiply.length; i < length; i++) {
-      addition.push(N/multiply[i]);
+      incExc += (N/multiply[i]);
     };
-    for (let i = 0, length = substract.length; i < length; i++) {
-      incExc -= substract[i];
-    };
-    for (let i = 0, length = addition.length; i < length; i++) {
-      incExc += addition[i];
-    };
+    return incExc;
   };
-
 
   for (let i = 0, length = pairs.length; i < length; i++) {
     N *= pairs[i][0] * pairs[i][1]; //calc N
+    if (N > 3000000000) {
+      return NaN;
+    }
+    Factorise(pairs[i][0]);
+    Factorise(pairs[i][1])
   };
-
-  for (let i = 0, length = pairs.length; i < length; i++) {
-    Factorise(pairs[i][0]); //factorise every elements in pairs array
-    Factorise(pairs[i][1]);
-  };
-
-  Euler();
-  incExc()
 
   for (let i = 0, length = s.length; i < length; i++) {
     if (s[i] == "1") {
-      ans += euler;
+      ans += Euler(N-i);
     } else {
-      ans += incExc;
+      ans += incExc(N-i);
+
     };
   };
   ans %= 1000000007;
