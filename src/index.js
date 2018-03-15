@@ -1,10 +1,12 @@
 module.exports = function count(s, pairs) {
   let N = 1,
-  simple = new Set,
+  simple,
+  iSimple,
   ans = 0;
 
   function Factorise (base) { //factorise function
-    var j = 1,
+    let simple = new Set,
+    j = 1,
     i = 2; // divider
     if (base == i) {
       simple.add(2);
@@ -21,12 +23,8 @@ module.exports = function count(s, pairs) {
     return simple;
   };
 
-  function Euler (N, i) { //Euler function
-    if (i > 0) {
-      var euler = N - (i - 1);
-    } else {
+  function Euler (N, simple) { //Euler function
     var euler = N;
-  };
     for (let key of simple) {
       if (key > N) {
         break;
@@ -37,22 +35,33 @@ module.exports = function count(s, pairs) {
   };
 
   for (let i = 0, length = pairs.length; i < length; i++) {
-    N *= pairs[i][0] * pairs[i][1]; //calc N
-    if (N > 3000000000) {
+    N *= Math.pow(pairs[i][0], pairs[i][1]); //calc N
+    if (N > 3000000000000) {
       return NaN;
     };
-    Factorise(pairs[i][0]);
-    Factorise(pairs[i][1]);
   };
 
-  for (let i = 0, length = s.length; i < length; i++) {
+  simple = Factorise(N);
+
+  for (let i = 0, length = pairs.length; i < length; i++) {
     if (s[i] == "1") {
-      ans += Euler(N, i);
+      switch (i) {
+        case 0: ans += Euler(N, simple);
+          break;
+        case i > 0: iSimple = Factorise(i);
+          ans += Euler(N, simple) - Euler(i, iSimple);
+          break;
+      }
     } else {
-      ans += N - Euler(N, i);
-
-    };
-  };
-  ans %= 1000000007;
-  return Math.floor(ans);
+      switch (i) {
+        case 0: ans += N - Euler(N, simple);
+          break;
+        case i > 0: iSimple = Factorise(i);
+          ans += N - Euler(N, simple) - (i - Euler(i, iSimple));
+          break;
+      }
+    }
+  }
+ans %= 1000000007;
+return ans;
 };
